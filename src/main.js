@@ -17,8 +17,9 @@ const gallery = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-formSearch.addEventListener('submit', handleSearch);
 nextBtn.addEventListener('click', nextPage);
+formSearch.addEventListener('submit', handleSearch);
+
 
 
 async function handleSearch(event) {
