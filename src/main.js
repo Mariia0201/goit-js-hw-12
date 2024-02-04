@@ -6,7 +6,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const formSearch = document.querySelector('.form');
 const imageList = document.querySelector('.gallery');
-const preload = document.querySelector('.loading');
+const loadingIndicator = document.querySelector('.loading');
 const nextBtn = document.querySelector('#next-btn');
 
 let page = 0;
@@ -20,7 +20,13 @@ const gallery = new SimpleLightbox('.gallery a', {
 nextBtn.addEventListener('click', nextPage);
 formSearch.addEventListener('submit', handleSearch);
 
+function showLoader() {
+  loadingIndicator.classList.remove('is-hidden');
+}
 
+function hideLoader() {
+  loadingIndicator.classList.add('is-hidden');
+}
 
 async function handleSearch(event) {
   event.preventDefault();
@@ -37,7 +43,7 @@ async function handleSearch(event) {
 
   if (!searchQuery.trim()) {
     iziToast.show({
-        title: '❕',
+      title: '❕',
       theme: 'light',
       message: `Please, fill in the search field`,
       messageSize: '20px',
@@ -49,21 +55,19 @@ async function handleSearch(event) {
     return;
   }
 
-    preload.classList.remove('is-hidden');
-
+  showLoader();
 
   try {
     const response = await fetchImages();
     if (response.hits.length === 0) {
       iziToast.show({
         theme: 'dark',
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-          messageSize: '16px',
-          messageColor: '#f96c6c',
-          backgroundColor: '#f5d1d1',
-          position: 'topRight',
-          timeout: 5000,
+        message: 'Sorry, there are no images matching your search query. Please try again!',
+        messageSize: '16px',
+        messageColor: '#f96c6c',
+        backgroundColor: '#f5d1d1',
+        position: 'topRight',
+        timeout: 5000,
       });
       form.reset();
       return;
@@ -81,7 +85,7 @@ async function handleSearch(event) {
   } catch (err) {
     handleError(err);
   } finally {
-    preload.classList.add('is-hidden');
+    hideLoader();
   }
 }
 
@@ -143,13 +147,11 @@ function createMarkup(arr) {
     )
     .join('');
 }
-  
 
 function handleError(err) {
   console.error(err);
   imageList.innerHTML = '';
   iziToast.show({
-    iconUrl: icon,
     theme: 'dark',
     message: err.stack,
     messageSize: '16px',
@@ -164,7 +166,7 @@ function handleError(err) {
 }
 
 async function nextPage() {
-  preload.classList.remove('is-hidden');
+  showLoader();
   nextBtn.classList.add('is-hidden');
   page += 1;
 
@@ -200,7 +202,7 @@ async function nextPage() {
   } catch (err) {
     handleError(err);
   } finally {
-    preload.classList.add('is-hidden');
+    hideLoader();
   }
 }
 
